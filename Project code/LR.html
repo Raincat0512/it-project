@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loss Report</title>
+    <link rel="stylesheet" href="LR.css">
+    <script src="library1.js"></script>
+</head>
+<body>
+    <img src="hkmu.png" alt="HKMU Logo" class="logo">
+    <h1>Loss Report</h1>
+    <form id="registrationForm" onsubmit="return confirmSubmission(event)">
+        <label for="reportDate">Report Date:</label>
+        <input type="date" id="reportDate" required><br><br>
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br><br>
+
+        <label for="idNumber">Student/Tutor/Staff ID No.:</label>
+        <input type="text" id="idNumber" required><br><br>
+
+        <label for="contactNumber">Contact Number:</label>
+        <input type="tel" id="contactNumber" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required><br><br>
+
+        <label for="lossDateTime">Date/Time of Loss:</label>
+        <input type="datetime-local" id="lossDateTime" required><br><br>
+
+        <label for="lostLocation">Location of Loss:</label>
+        <select id="lostLocation" required onchange="OtherLocation()">
+            <option value="">Select Location</option>
+            <option value="Main Campus (MC)">Main Campus (MC)</option>
+            <option value="Jockey Club Campus (JCC)">Jockey Club Campus (JCC)</option>
+            <option value="Jockey Club Institute of Healthcare (IOH)">Jockey Club Institute of Healthcare (IOH)</option>
+            <option value="Other">Other</option>
+        </select><br><br>
+
+        <div id="otherLocationField" style="display: none;">
+            <label for="otherLocation">Please specify:</label>
+            <input type="text" id="otherLocation"><br><br>
+        </div>
+
+        <label for="lostItem">Lost Item:</label>
+        <select id="lostItem" required onchange="OtherItem()">
+            <option value="">Select Item</option>
+            <option value="Personal Octopus">Personal Octopus</option>
+            <option value="Octopus">Octopus</option>
+            <option value="USB">USB</option>
+            <option value="Mobile Phone">Mobile Phone</option>
+            <option value="Computer">Computer</option>
+            <option value="Other">Others</option>
+        </select><br><br>
+
+        <div id="otherItemField" style="display: none;">
+            <label for="otherItem">Please specify:</label>
+            <input type="text" id="otherItem"><br><br>
+        </div>
+
+        <label for="details">Particulars (e.g. Brand/color/features):</label><br>
+        <textarea id="details" rows="1" required></textarea><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        function OtherLocation() {
+            const selectedValue = document.getElementById('lostLocation').value;
+            const otherLocationField = document.getElementById('otherLocationField');
+            otherLocationField.style.display = selectedValue === 'Other' ? 'block' : 'none';
+        }
+
+        function OtherItem() {
+            const selectedValue = document.getElementById('lostItem').value;
+            const otherItemField = document.getElementById('otherItemField');
+            otherItemField.style.display = selectedValue === 'Other' ? 'block' : 'none';
+        }
+
+        function confirmSubmission(event) {
+            const confirmationMessage = "Are you sure you want to submit the report?";
+            if (confirm(confirmationMessage)) {
+                LostItemManager.handleFormSubmission(event);
+                return true;
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>

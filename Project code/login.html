@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Staff Login - HKMU Lost & Found</title>
+    <link rel="stylesheet" href="MP.css">
+</head>
+<body>
+    <header>
+        <h1>Lost & Found</h1>
+        <h2>Staff Login</h2>
+    </header>
+
+    <div style="max-width: 400px; margin: 0 auto; padding: 20px; border: 1px solid #ccc; border-radius: 5px;">
+        <label for="username" style="font-weight: bold;">Username:</label><br>
+        <input 
+            type="text" 
+            id="username" 
+            placeholder="Enter username" 
+            style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;"
+        >
+        <br>
+        <label for="password" style="font-weight: bold;">Password:</label><br>
+        <input 
+            type="password" 
+            id="password" 
+            placeholder="Enter password" 
+            style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px;"
+        >
+        <br>
+        <button 
+            onclick="login()" 
+            style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;"
+        >
+            Login
+        </button>
+        <p id="errorMessage" style="color: red; margin-top: 10px;"></p>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const validUsername = "staff";
+            const validPassword = "HKMU123";
+
+            if (username === validUsername && password === validPassword) {
+                localStorage.setItem('isStaffLoggedIn', 'true');
+
+                if (localStorage.getItem('redirectToLostItems') === 'true') {
+                    localStorage.removeItem('redirectToLostItems'); 
+                    window.location.href = 'page for lost item.html'; 
+                } else {
+                    window.location.href = 'homepage.html'; 
+                }
+            } else {
+                document.getElementById('errorMessage').textContent = 'Invalid username or password.';
+            }
+        }
+
+        window.onload = function() {
+            if (localStorage.getItem('isStaffLoggedIn') === 'true') {
+                if (localStorage.getItem('redirectToLostItems') === 'true') {
+                    localStorage.removeItem('redirectToLostItems'); 
+                    window.location.href = 'page for lost item.html';
+                } else {
+                    window.location.href = 'homepage.html';
+                }
+            }
+        };
+    </script>
+</body>
+</html>

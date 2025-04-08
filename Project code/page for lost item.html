@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Items - HKMU</title>
+    <link rel="stylesheet" href="MP.css">
+    <script src="library1.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Lost & Found</h1>
+        <h2>Lost Items</h2>
+    </header>
+
+    <div style="margin-bottom: 20px;">
+        <input 
+            type="text" 
+            id="searchBar" 
+            placeholder="Search lost items..." 
+            style="padding: 10px; width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 5px;"
+            oninput="searchLostItems()" 
+        />
+    </div>
+
+    <div id="lostItemsList"></div>
+
+    <button onclick="window.location.href='homepage.html'">Back to Home</button>
+
+    <script>
+        let isStaff = false;
+
+        function displayLostItems(items) {
+            const lostItemsList = document.getElementById('lostItemsList');
+            lostItemsList.innerHTML = '';
+
+            if (items.length === 0) {
+                lostItemsList.innerHTML = '<p>No lost items found.</p>';
+            } else {
+                items.forEach((item) => {
+                    lostItemsList.innerHTML += `
+                        <div style="background-color: #f8f8f8; padding: 10px; border-radius: 5px; margin-bottom: 10px; position: relative;">
+                            <p><strong>Name:</strong> ${item.name}</p>
+                            <p><strong>Description:</strong> ${item.details}</p>
+                            <p><strong>Date Lost:</strong> ${item.lossDateTime}</p>
+                            <p><strong>Location:</strong> ${item.lostLocation}</p>
+                            <p><strong>Item:</strong> ${item.lostItem}</p>
+                            <p><strong>Status:</strong> ${item.found ? 'Found' : 'Lost'}</p>
+                            ${
+                                isStaff 
+                                    ? `<button 
+                                        style="position: absolute; top: 10px; right: 10px; background-color: green; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;"
+                                        onclick="markItemFound(${item.id})"
+                                        ${item.found ? 'disabled' : ''}
+                                    >
+                                        Mark as Found
+                                    </button>`
+                                    : ''
+                            }
+                            ${
+                                isStaff
+                                    ? `<button 
+                                        style="position: absolute; top: 50px; right: 10px; background-color: red; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;"
+                                        onclick="deleteLostItem(${item.id})"
+                                    >
+                                        Delete
+                                    </button>`
+                                    : `<button 
+                                        style="position: absolute; top: 50px; right: 10px; background-color: gray; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;"
+                                        onclick="redirectToLogin(${item.id})"
+                                    >
+                                        Delete
+                                    </button>`
+                            }
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function markItemFound(id) {
+            if (LostItemManager.markItemFound(id)) {
+                alert("Item marked as found!");
+                init(); 
+            } else {
+                alert("Failed to mark the item as found.");
+            }
+        }
+
+        function deleteLostItem(id) {
+            if (confirm("Are you sure you want to delete this lost item?")) {
+                const index = lostItems.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    lostItems.splice(index, 1);
+                    localStorage.setItem('lostItems', JSON.stringify(lostItems)); 
+                    searchLostItems();
+                }
+            }
+        }
+
+        function redirectToLogin(id) {
+            localStorage.setItem('redirectToLostItems', 'true'); 
+            localStorage.setItem('deleteItemId', id); 
+            window.location.href = 'login.html';
+        }
+
+        function searchLostItems() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const filteredItems = LostItemManager.searchLostItems(query);
+            displayLostItems(filteredItems);
+        }
+
+        function init() {
+            isStaff = localStorage.getItem('isStaffLoggedIn') === 'true';
+            lostItems = LostItemManager.getLostItems();
+            displayLostItems(lostItems);
+
+            if (isStaff) {
+                const deleteId = localStorage.getItem('deleteItemId');
+                if (deleteId !== null) {
+                    deleteLostItem(parseInt(deleteId));
+                    localStorage.removeItem('deleteItemId');
+                }
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
